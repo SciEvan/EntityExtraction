@@ -4,3 +4,4 @@
 # @Author: 张伟
 # @EMAIL: Jtyoui@qq.com
 # @Notes : 基础的API
+from .data_util import DealText
