@@ -6,6 +6,7 @@
 # @Notes : 训练文件
 import numpy as np
 import tensorflow as tf
+import tensorflow_addons as tfa
 
 from config import *
 from entity_extraction import DealText, NERModel
@@ -39,5 +40,7 @@ for epoch in range(int(EPOCHS)):
         optimizers.apply_gradients(grads_and_vars=zip(grads, model.trainable_variables))
         if index % 20 == 0:
             print(epoch, loss)
+            for y, l in zip(y_pred, text_lens):
+                print(tfa.text.viterbi_decode(y[:l], model.params))
 
 tf.saved_model.save(model, SAVE_MODEL_DIR, signatures={'call': model.call})
