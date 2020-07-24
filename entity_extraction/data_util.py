@@ -54,6 +54,11 @@ class DealText:
         word_index_file = os.path.join(self.dir, f'{name}_index.json')
         if not (os.path.exists(index_word_file) and os.path.exists(word_index_file)):
             token.fit_on_texts(words)
+            if name == 'labels':
+                # 排序规则。如果长度为1,就是O，根据ascii值伪1
+                token.word_index = {k: i for i, (k, v) in enumerate(
+                    sorted(token.word_index.items(), key=lambda x: x[0][::-1] if len(x[0]) != 1 else chr(1)))}
+                token.index_word = {v: k for k, v in token.word_index.items()}
             with open(index_word_file, mode='w', encoding=ENCODING)as wf:
                 json.dump(token.index_word, fp=wf, ensure_ascii=False, indent=4)
             with open(word_index_file, mode='w', encoding=ENCODING)as wf:
@@ -66,7 +71,7 @@ class DealText:
                 word_index = json.load(rf)
                 token.word_index = word_index
         if name == 'words':
-            os.environ['VOCAB_SIZE'] = str(len(token.word_index))  # 更新vocab的大小
+            os.environ['VOCAB_SIZE'] = str(len(token.word_index) + 1)  # 更新vocab的大小
         if name == 'labels':
             os.environ['TAG_SIZE'] = str(len(token.word_index))  # 更新TAG的大小
         sequence = token.texts_to_sequences(words)

@@ -6,11 +6,11 @@
 # @Notes : 测试文件
 import tensorflow as tf
 
-from config import SAVE_MODEL_DIR, MAX_WORD_LENGTH
+from config import *
 from entity_extraction import DealText
 
 if __name__ == '__main__':
-    dt = DealText('/home/jtyoui/Downloads/病理实体数据/test.tsv')
+    dt = DealText(TEST_DATA)
     words, labels = dt.reader_text()
     word_sequence = dt.get_sequence(words[:10], name='words')
     label_sequence = dt.get_sequence(labels[:10], name='labels')

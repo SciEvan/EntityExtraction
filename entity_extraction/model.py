@@ -15,8 +15,8 @@ from config import *
 class NERModel(tf.keras.Model):
     def __init__(self):
         super().__init__()
-        tag_size = int(os.environ['TAG_SIZE']) + 1
-        self.embedding = tf.keras.layers.Embedding(int(os.environ['VOCAB_SIZE']) + 1, output_dim=int(EMBEDDING_SIZE))
+        tag_size = int(os.environ['TAG_SIZE'])
+        self.embedding = tf.keras.layers.Embedding(int(os.environ['VOCAB_SIZE']), output_dim=int(EMBEDDING_SIZE))
         # self.cnn = tf.keras.layers.Conv1D(kernel_size=5, strides=2, padding='same', filters=32)
         # self.dense = tf.keras.layers.Dense(units=128, activation=tf.keras.activations.relu)
         # self.dropout = tf.keras.layers.Dropout(rate=0.5)

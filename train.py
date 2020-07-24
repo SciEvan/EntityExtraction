@@ -10,7 +10,7 @@ import tensorflow as tf
 from config import *
 from entity_extraction import DealText, NERModel
 
-dt = DealText('/home/jtyoui/Downloads/病理实体数据/train.tsv')
+dt = DealText(TRAIN_DATA)
 words, labels = dt.reader_text()
 word_sequence = dt.get_sequence(words, name='words')
 label_sequence = dt.get_sequence(labels, name='labels')
@@ -38,6 +38,6 @@ for epoch in EPOCHS:
         grads = tape.gradient(target=loss, sources=model.trainable_variables)
         optimizers.apply_gradients(grads_and_vars=zip(grads, model.trainable_variables))
         if index % 20 == 0:
-            print(loss)
+            print(epoch, loss)
 
 tf.saved_model.save(model, SAVE_MODEL_DIR, signatures={'call': model.call})
