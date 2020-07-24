@@ -37,7 +37,7 @@ for epoch in EPOCHS:
             loss = - tf.reduce_mean(log_likelihood)
         grads = tape.gradient(target=loss, sources=model.trainable_variables)
         optimizers.apply_gradients(grads_and_vars=zip(grads, model.trainable_variables))
-        if index % 20 == 0:
+        if index % 100 == 0:
             print(epoch, loss)
 
 tf.saved_model.save(model, SAVE_MODEL_DIR, signatures={'call': model.call})
