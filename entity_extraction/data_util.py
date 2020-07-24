@@ -7,7 +7,7 @@
 import json
 import os
 
-from tensorflow.keras.preprocessing import text
+import tensorflow as tf
 
 from config import *
 
@@ -32,7 +32,7 @@ class DealText:
                 labels.append(label)
         return words, labels
 
-    def get_sequence(self, words: list, name):
+    def get_sequence(self, words: list, name: str):
         """获取words的序列
 
         输入一维列表，如： words: ['我,和，他','他,和,你']
@@ -46,7 +46,10 @@ class DealText:
         :param name: 加载自定义映射表
         :return: 该字符的序列
         """
-        token = text.Tokenizer(num_words=MAX_UNM_WORD, split=TEXT_SPLIT_SEP, filters=TEXT_SPLIT_SEP)
+        assert name in ['words', 'labels'], TypeError('name必须填写words或者labels')
+        token = tf.keras.preprocessing.text.Tokenizer(num_words=int(MAX_UNM_CHAR),
+                                                      split=TEXT_SPLIT_SEP,
+                                                      filters=TEXT_SPLIT_SEP)
         index_word_file = os.path.join(self.dir, f'index_{name}.json')
         word_index_file = os.path.join(self.dir, f'{name}_index.json')
         if not (os.path.exists(index_word_file) and os.path.exists(word_index_file)):
@@ -62,5 +65,9 @@ class DealText:
             with open(word_index_file, mode='r', encoding=ENCODING) as rf:
                 word_index = json.load(rf)
                 token.word_index = word_index
+        if name == 'words':
+            os.environ['VOCAB_SIZE'] = str(len(token.word_index))  # 更新vocab的大小
+        if name == 'labels':
+            os.environ['TAG_SIZE'] = str(len(token.word_index))  # 更新TAG的大小
         sequence = token.texts_to_sequences(words)
         return sequence

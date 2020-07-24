@@ -5,3 +5,4 @@
 # @EMAIL: Jtyoui@qq.com
 # @Notes : 基础的API
 from .data_util import DealText
+from .model import NERModel
