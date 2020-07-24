@@ -29,7 +29,7 @@ tensor_slices = tf.data.Dataset.from_tensor_slices((word_sequence, label_sequenc
 model = NERModel()
 
 optimizers = tf.keras.optimizers.Adam(learning_rate=float(LEARNING_RATE))
-for epoch in EPOCHS:
+for epoch in range(len(EPOCHS)):
     dataset = tensor_slices.shuffle(buffer_size=int(BUFFER_SIZE)).batch(batch_size=int(BATCH_SIZE))
     for index, (word, label) in enumerate(dataset):
         with tf.GradientTape() as tape:
