@@ -14,15 +14,25 @@ if __name__ == '__main__':
     words, labels = dt.reader_text()
     word_sequence = dt.get_sequence(words[:10], name='words')
     label_sequence = dt.get_sequence(labels[:10], name='labels')
+
     word_sequence = tf.keras.preprocessing.sequence.pad_sequences(sequences=word_sequence,
                                                                   maxlen=int(MAX_WORD_LENGTH),
                                                                   padding='post',
                                                                   dtype='int32',
                                                                   truncating='post')
+
+    label_sequence = tf.keras.preprocessing.sequence.pad_sequences(sequences=label_sequence,
+                                                                   maxlen=int(MAX_WORD_LENGTH),
+                                                                   padding='post',
+                                                                   dtype='int32',
+                                                                   truncating='post')
+
     label = tf.constant(value=[[0] * int(MAX_WORD_LENGTH)], dtype=tf.int32)
     model = tf.saved_model.load(SAVE_MODEL_DIR)
-    for i in word_sequence:
+    for index, i in enumerate(word_sequence):
         word = tf.expand_dims(i, axis=0)
         y_pred, _, _ = model.call(word=word, label=label)
-        print(y_pred)
-        break
+        y = tf.squeeze(tf.argmax(y_pred, axis=2))
+        print(label_sequence[index])
+        print(y)
+        print('--------')
