@@ -12,6 +12,8 @@ import tensorflow_addons as tfa
 from config import *
 
 
+# tf.config.experimental_run_functions_eagerly(True) # 调试
+
 class NERModel(tf.keras.Model):
     def __init__(self):
         super().__init__()
