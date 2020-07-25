@@ -47,13 +47,10 @@ class DealText:
         :return: 该字符的序列
         """
         assert name in ['words', 'labels'], TypeError('name必须填写words或者labels')
-        token = tf.keras.preprocessing.text.Tokenizer(num_words=int(MAX_UNM_CHAR),
-                                                      split=TEXT_SPLIT_SEP,
-                                                      filters=TEXT_SPLIT_SEP)
+        token = tf.keras.preprocessing.text.Tokenizer(int(MAX_UNM_CHAR), split=TEXT_SPLIT_SEP, filters=TEXT_SPLIT_SEP)
         index_word_file = os.path.join(self.dir, f'index_{name}.json')
-        word_index_file = os.path.join(self.dir, f'{name}_index.json')
-        if not (os.path.exists(index_word_file) and os.path.exists(word_index_file)):
-            token.fit_on_texts(words)
+        if not os.path.exists(index_word_file):
+            token.fit_on_texts(words)  # 构建文件序列
             if name == 'labels':
                 # 排序规则。如果长度为1,就是O，根据ascii值伪1
                 token.word_index = {k: i for i, (k, v) in enumerate(
@@ -61,15 +58,10 @@ class DealText:
                 token.index_word = {v: k for k, v in token.word_index.items()}
             with open(index_word_file, mode='w', encoding=ENCODING)as wf:
                 json.dump(token.index_word, fp=wf, ensure_ascii=False, indent=4)
-            with open(word_index_file, mode='w', encoding=ENCODING)as wf:
-                json.dump(token.word_index, fp=wf, ensure_ascii=False, indent=4)
         else:
             with open(index_word_file, mode='r', encoding=ENCODING) as rf:
-                index_word = json.load(rf)
-                token.index_word = index_word
-            with open(word_index_file, mode='r', encoding=ENCODING) as rf:
-                word_index = json.load(rf)
-                token.word_index = word_index
+                token.index_word = json.load(rf)
+                token.word_index = {v: int(k) for k, v in token.index_word.items()}
         if name == 'words':
             os.environ['VOCAB_SIZE'] = str(len(token.word_index) + 1)  # 更新vocab的大小
         if name == 'labels':
