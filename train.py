@@ -4,9 +4,7 @@
 # @Author: 张伟
 # @EMAIL: Jtyoui@qq.com
 # @Notes : 训练文件
-import numpy as np
 import tensorflow as tf
-import tensorflow_addons as tfa
 
 from config import *
 from entity_extraction import DealText, NERModel
@@ -18,13 +16,13 @@ label_sequence = dt.get_sequence(labels, name='labels')
 word_sequence = tf.keras.preprocessing.sequence.pad_sequences(sequences=word_sequence,
                                                               maxlen=int(MAX_WORD_LENGTH),
                                                               padding='post',
-                                                              dtype=np.int32,
+                                                              dtype='int32',
                                                               truncating='post')
 
 label_sequence = tf.keras.preprocessing.sequence.pad_sequences(sequences=label_sequence,
                                                                maxlen=int(MAX_WORD_LENGTH),
                                                                padding='post',
-                                                               dtype=np.int32,
+                                                               dtype='int32',
                                                                truncating='post')
 tensor_slices = tf.data.Dataset.from_tensor_slices((word_sequence, label_sequence))
 model = NERModel()
@@ -39,8 +37,6 @@ for epoch in range(int(EPOCHS)):
         grads = tape.gradient(target=loss, sources=model.trainable_variables)
         optimizers.apply_gradients(grads_and_vars=zip(grads, model.trainable_variables))
         if index % 20 == 0:
-            print(epoch, loss)
-            for y, l in zip(y_pred, text_lens):
-                print(tfa.text.viterbi_decode(y[:l], model.params))
-
+            print(f'训练中......第{epoch}次迭代中的第{index}个次数,当前损失值为:{loss}')
+print('训练完毕！正在保存')
 tf.saved_model.save(model, SAVE_MODEL_DIR, signatures={'call': model.call})
