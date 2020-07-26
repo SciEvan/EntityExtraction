@@ -96,8 +96,9 @@ url = 'http://IP:8501/v1/models/ner:predict'
 headers = {"content-type": "application/json"}
 
 def ner(words: str):
-    word = [word_index.get(i, 0) for i in words]
     length = len(words)
+    assert length <= 200, ValueError('输入的字符串最大长度为200')
+    word = [word_index.get(i, 0) for i in words]
     data = json.dumps({
         'inputs': {
             "word": [word + [0] * (200 - length)],
