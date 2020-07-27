@@ -4,12 +4,14 @@
 # @Author: 张伟
 # @EMAIL: Jtyoui@qq.com
 # @Notes : 生成评估文件
+import json
+import os
+
 import tensorflow as tf
 import tensorflow_addons as tfa
+
 from config import *
 from entity_extraction import DealText
-import os
-import json
 
 dt = DealText(TEST_DATA)
 words, labels = dt.reader_text()
